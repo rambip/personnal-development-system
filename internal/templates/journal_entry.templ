@@ -1,0 +1,32 @@
+package templates
+
+import "test-go-htmx/internal/viewmodels"
+
+// JournalEntry renders a single journal entry
+templ JournalEntry(entry viewmodels.JournalEntry) {
+	<div class={ "journal-entry", entry.JournalType }>
+		<h3>{ entry.Title }</h3>
+		<div class="meta">
+			<span>Type: { entry.JournalType }</span> |
+			<span>Created: { viewmodels.FormatTime(entry.CreatedAt) }</span>
+		</div>
+		<div class="content">
+			if entry.Content != "" {
+				{ entry.Content }
+			} else {
+				<em>No content</em>
+			}
+		</div>
+	</div>
+}
+
+// JournalList renders a list of journal entries
+templ JournalList(journals []viewmodels.JournalEntry) {
+	if len(journals) > 0 {
+		for _, journal := range journals {
+			@JournalEntry(journal)
+		}
+	} else {
+		<p>No journal entries yet.</p>
+	}
+}

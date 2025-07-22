@@ -1,0 +1,42 @@
+package templates
+
+import (
+	"test-go-htmx/internal/viewmodels"
+	"time"
+)
+
+templ Journals(journals []viewmodels.JournalEntry) {
+	@Base("Journals | Journal App", time.Now().Year()) {
+		<div>
+			<h1>My Journals</h1>
+			<div class="tab-links">
+				<button id="all-tab" class="active" hx-get="/journals" hx-target="#journal-list" hx-trigger="click">All</button>
+				<button id="gratitude-tab" hx-get="/journals/type/gratitude" hx-target="#journal-list" hx-trigger="click">Gratitude</button>
+				<button id="frustrations-tab" hx-get="/journals/type/frustrations" hx-target="#journal-list" hx-trigger="click">Frustrations</button>
+			</div>
+			<div id="journal-list">
+				@JournalList(journals)
+			</div>
+			<h2>Add New Journal Entry</h2>
+			<form hx-post="/journals" hx-target="#journal-list" hx-swap="afterbegin">
+				<div>
+					<label for="journal-type">Journal Type:</label>
+					<select id="journal-type" name="journal_type" required>
+						<option value="">Select a type</option>
+						<option value="gratitude">Gratitude</option>
+						<option value="frustrations">Frustrations</option>
+					</select>
+				</div>
+				<div>
+					<label for="title">Title:</label>
+					<input type="text" id="title" name="title" required/>
+				</div>
+				<div>
+					<label for="content">Content:</label>
+					<textarea id="content" name="content" required></textarea>
+				</div>
+				<button type="submit">Save Journal Entry</button>
+			</form>
+		</div>
+	}
+}

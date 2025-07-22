@@ -1,0 +1,16 @@
+package templates
+
+import "time"
+
+templ Home() {
+	@Base("Home | Journal App", time.Now().Year()) {
+		<div>
+			<h1>Journal App</h1>
+			<div class="actions">
+				<a href="/journals" style="text-decoration: none;">
+					<button>Go to Journals</button>
+				</a>
+			</div>
+		</div>
+	}
+}
