@@ -1,7 +1,7 @@
 package models
 
 import (
-	"test-go-htmx/internal/database"
+	"pds/internal/database"
 )
 
 // Behaviour represents a behaviour that conflicts with an aim
@@ -27,7 +27,7 @@ func CreateBehaviour(name, description, mark string, conflictingAimID int64) (in
 // GetAllBehaviours retrieves all behaviours with their conflicting aim names
 func GetAllBehaviours() ([]Behaviour, error) {
 	query := `
-		SELECT b.id, b.name, b.description, b.mark, b.conflicting_aim_id, a.name 
+		SELECT b.id, b.name, b.description, b.mark, b.conflicting_aim_id, a.name
 		FROM behaviours b
 		LEFT JOIN aims a ON b.conflicting_aim_id = a.id
 	`

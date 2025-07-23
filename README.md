@@ -1,42 +1,69 @@
-# Go + HTML Project Template
+# Journal App
 
-## Overview
-This project is a template for building web applications using Go for the backend and HTML for the frontend. It includes a basic structure for organizing code, templates, and static assets.
+A Go application for tracking journals, values, plans, statements, and behaviors with HTMX-powered UI.
+
+This is meant to be an implementation of a [Personnal Development System](https://www.lesswrong.com/posts/mpbtk2xBjqjL7p5uQ/personal-development-system-winning-repeatedly-and-growing)
+
+## Features
+- Journal entries with different types
+- Value tracking and hierarchies
+- Plan management with resources required
+- Statement tracking with priority levels
+- Behavior tracking with conflicting values
+- HTMX-powered inline editing without page refreshes
 
 ## Project Structure
 ```
-/project-root
-├── /cmd                # Entry point for the application
-│   └── main.go         # Main application file
-├── /internal           # Internal packages
-│   └── /handlers       # HTTP handlers
-│       └── handlers.go
-├── /web                # Web assets
-│   ├── /templates      # HTML templates
-│   │   └── index.html
-│   └── /static         # Static files (CSS, JS, images)
-│       ├── style.css
-│       └── script.js
+/test-go-htmx
+├── main.go             # Application entry point
+├── internal/           # Contains private application code
+│   ├── database/       # Database connection and migrations
+│   │   └── migrations/ # SQL migration files
+│   ├── handlers/       # HTTP handlers for processing requests
+│   ├── models/         # Business logic and domain models
+│   └── templates/      # Type-safe templ HTML templates
+├── web/                # Web assets
+│   └── static/         # Static files (CSS, JS, images)
+├── tools/              # Helper tools and utilities
 ├── go.mod              # Go module file
 └── README.md           # Project documentation
 ```
 
-## Getting Started
-1. **Install Go**: Ensure you have Go installed on your system.
-2. **Clone the Repository**: Clone this project to your local machine.
-3. **Run the Application**:
-   - Navigate to the `cmd` directory.
-   - Run `go run main.go` to start the server.
+## Quick Start Options
 
-## Features
-- **Go Backend**: Handles HTTP requests and serves HTML templates.
-- **HTML Frontend**: Includes basic templates for rendering pages.
-- **Static Assets**: CSS, JavaScript, and images are organized in the `/web/static` directory.
+### Option 1: Local Development Setup
 
-## Development
-- Add new HTTP handlers in `/internal/handlers`.
-- Create or update HTML templates in `/web/templates`.
-- Add static files (CSS, JS, images) in `/web/static`.
+#### Prerequisites
+- Go 1.18+
+- [Templ](https://github.com/a-h/templ) (for generating templates)
+- SQLite (included in Go's standard library via mattn/go-sqlite3)
+
+#### Steps
+1. **Clone the repository**
+```bash
+git clone https://github.com/yourusername/test-go-htmx.git
+cd test-go-htmx
+```
+
+2. **Install Templ**
+```bash
+go install github.com/a-h/templ/cmd/templ@latest
+```
+
+3. **Generate templates and build**
+```bash
+templ generate
+go build ./...
+```
+
+4. **Run the application**
+```bash
+./test-go-htmx
+```
+
+5. **Access the application**
+Open your browser and navigate to http://localhost:8888
+
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.

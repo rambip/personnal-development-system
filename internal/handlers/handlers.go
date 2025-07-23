@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"test-go-htmx/internal/models"
-	"test-go-htmx/internal/templates"
+	"pds/internal/models"
+	"pds/internal/templates"
 )
 
 // These conversion functions are no longer needed with the simplified model approach

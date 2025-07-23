@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"pds/internal/models"
+	"pds/internal/templates"
 	"strconv"
 	"strings"
-	"test-go-htmx/internal/models"
-	"test-go-htmx/internal/templates"
 )
 
 // PlansHandler handles the Plans page
@@ -201,7 +201,7 @@ func EditPlanHandler(w http.ResponseWriter, r *http.Request) {
 			</td>
 			<td>
 				<div style="display: flex; gap: 5px;">
-					<button 
+					<button
 						hx-put="/plans/update/%d"
 						hx-include="closest tr"
 						hx-target="#plan-row-%d"
@@ -209,7 +209,7 @@ func EditPlanHandler(w http.ResponseWriter, r *http.Request) {
 						style="background-color: #4CAF50; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px;">
 						Save
 					</button>
-					<button 
+					<button
 						hx-get="/plans/cancel-edit/%d"
 						hx-target="#plan-row-%d"
 						hx-swap="outerHTML"
@@ -275,7 +275,7 @@ func CancelEditHandler(w http.ResponseWriter, r *http.Request) {
 			<td>%s</td>
 			<td>%s</td>
 			<td>
-				<button 
+				<button
 					hx-get="/plans/edit/%d"
 					hx-target="#plan-row-%d"
 					hx-swap="outerHTML">
@@ -379,7 +379,7 @@ func UpdatePlanHandler(w http.ResponseWriter, r *http.Request) {
 			<td>%s</td>
 			<td>%s</td>
 			<td>
-				<button 
+				<button
 					hx-get="/plans/edit/%d"
 					hx-target="#plan-row-%d"
 					hx-swap="outerHTML">

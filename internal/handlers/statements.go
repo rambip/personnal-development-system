@@ -3,9 +3,9 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"pds/internal/models"
+	"pds/internal/templates"
 	"strconv"
-	"test-go-htmx/internal/models"
-	"test-go-htmx/internal/templates"
 )
 
 // StatementsHandler handles the Statements page

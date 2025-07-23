@@ -1,7 +1,7 @@
 package models
 
 import (
-	"test-go-htmx/internal/database"
+	"pds/internal/database"
 )
 
 // Statement represents a statement in the system

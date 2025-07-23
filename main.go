@@ -6,8 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"test-go-htmx/internal/database"
-	"test-go-htmx/internal/handlers"
+	"pds/internal/database"
+	"pds/internal/handlers"
 )
 
 func main() {

@@ -1,7 +1,7 @@
 package templates
 
 import (
-	"test-go-htmx/internal/models"
+	"pds/internal/models"
 	"strconv"
 )
 
@@ -22,12 +22,13 @@ templ BehavioursList(behaviours []models.Behaviour) {
 					<td>{ behaviour.Mark }</td>
 					<td>{ behaviour.ConflictingAimName }</td>
 					<td>
-						<button 
+						<button
 							hx-delete="/behaviours/delete"
 							hx-confirm="Are you sure you want to delete this behaviour?"
 							hx-target="closest tr"
 							hx-swap="outerHTML"
-							hx-vals={ `{"behaviourID": "` + strconv.FormatInt(behaviour.ID, 10) + `"}` }>
+							hx-vals={ `{"behaviourID": "` + strconv.FormatInt(behaviour.ID, 10) + `"}` }
+						>
 							Delete
 						</button>
 					</td>

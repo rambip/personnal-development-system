@@ -1,8 +1,8 @@
 package templates
 
 import (
+	"pds/internal/models"
 	"strconv"
-	"test-go-htmx/internal/models"
 	"time"
 )
 
@@ -39,10 +39,8 @@ templ StatementsPage(statements []models.Statement) {
 			<form method="POST" action="/statements/create">
 				<label for="content">What is your statement?</label>
 				<input type="text" id="content" name="content" required/>
-
 				<label for="priority">Set a priority (0-10):</label>
 				<input type="number" id="priority" name="priority" min="0" max="10" value="0"/>
-
 				<button type="submit">Add Statement</button>
 			</form>
 		</div>

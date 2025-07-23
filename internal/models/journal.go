@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"test-go-htmx/internal/database"
+	"pds/internal/database"
 )
 
 // Journal represents a journal entry in the database

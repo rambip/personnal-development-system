@@ -1,4 +1,4 @@
-module test-go-htmx
+module pds
 
 go 1.23.0
 

@@ -6,8 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"test-go-htmx/internal/database"
-	"test-go-htmx/internal/models"
+	"pds/internal/database"
+	"pds/internal/models"
 )
 
 func TestDBMain() {

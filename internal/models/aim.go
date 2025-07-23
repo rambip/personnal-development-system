@@ -3,7 +3,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
-	"test-go-htmx/internal/database"
+	"pds/internal/database"
 )
 
 // Aim represents a value in the system

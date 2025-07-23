@@ -1,8 +1,8 @@
 package templates
 
 import (
+	"pds/internal/models"
 	"strconv"
-	"test-go-htmx/internal/models"
 )
 
 templ EditPlanForm(plan models.Plan, values []models.Aim) {
@@ -29,17 +29,19 @@ templ EditPlanForm(plan models.Plan, values []models.Aim) {
 			</select>
 		</td>
 		<td>
-			<button 
+			<button
 				hx-put={ "/plans/update/" + strconv.FormatInt(plan.ID, 10) }
 				hx-include="closest tr"
 				hx-target={ "#plan-row-" + strconv.FormatInt(plan.ID, 10) }
-				hx-swap="outerHTML">
+				hx-swap="outerHTML"
+			>
 				Save
 			</button>
-			<button 
+			<button
 				hx-get={ "/plans/cancel-edit/" + strconv.FormatInt(plan.ID, 10) }
 				hx-target={ "#plan-row-" + strconv.FormatInt(plan.ID, 10) }
-				hx-swap="outerHTML">
+				hx-swap="outerHTML"
+			>
 				Cancel
 			</button>
 		</td>

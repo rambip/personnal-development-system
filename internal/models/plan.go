@@ -1,7 +1,7 @@
 package models
 
 import (
-	"test-go-htmx/internal/database"
+	"pds/internal/database"
 )
 
 // Plan represents a plan in the system
