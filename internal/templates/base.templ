@@ -130,6 +130,19 @@ templ Base(title string, currentYear int) {
 					background-color: #0066cc;
 					color: white;
 				}
+				.htmx-indicator {
+					opacity: 0;
+					transition: opacity 500ms ease-in;
+					margin-left: 10px;
+					font-style: italic;
+					color: #666;
+				}
+				.htmx-request .htmx-indicator {
+					opacity: 1;
+				}
+				.htmx-request.htmx-indicator {
+					opacity: 1;
+				}
 				h1 {
 					border-bottom: 2px solid #eaecef;
 					padding-bottom: 0.3em;

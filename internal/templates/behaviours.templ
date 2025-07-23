@@ -10,31 +10,42 @@ templ BehavioursPage(behaviours []models.Behaviour, aims []models.Aim) {
 	@Base("Behaviours | Journal App", time.Now().Year()) {
 		<div>
 			<h1>Behaviours in Conflict with Values</h1>
-			<table>
-				<tr>
-					<th>Name</th>
-					<th>Description</th>
-					<th>Conflicts with Value</th>
-					<th>Actions</th>
-				</tr>
-				for _, behaviour := range behaviours {
+			<div id="behaviours-list">
+				<table>
 					<tr>
-						<td>{ behaviour.Name }</td>
-						<td>{ behaviour.Description }</td>
-						<td>{ behaviour.ConflictingAimName }</td>
-						<td>
-							<form method="POST" action="/behaviours/delete">
-								<input type="hidden" name="behaviourID" value={ strconv.FormatInt(behaviour.ID, 10) }/>
-								<button type="submit">Delete</button>
-							</form>
-						</td>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Conflicts with Value</th>
+						<th>Actions</th>
 					</tr>
-				}
-			</table>
+					for _, behaviour := range behaviours {
+						<tr>
+							<td>{ behaviour.Name }</td>
+							<td>{ behaviour.Description }</td>
+							<td>{ behaviour.ConflictingAimName }</td>
+							<td>
+								<button 
+									hx-delete="/behaviours/delete"
+									hx-confirm="Are you sure you want to delete this behaviour?"
+									hx-target="closest tr"
+									hx-swap="outerHTML"
+									hx-vals={ `{"behaviourID": "` + strconv.FormatInt(behaviour.ID, 10) + `"}` }>
+									Delete
+								</button>
+							</td>
+						</tr>
+					}
+				</table>
+			</div>
 		</div>
 		<div>
 			<h2>Add a New Behaviour</h2>
-			<form method="POST" action="/behaviours/create">
+			<form 
+				hx-post="/behaviours/create" 
+				hx-target="#behaviours-list" 
+				hx-swap="outerHTML" 
+				hx-indicator="#spinner">
+				
 				<label for="name">What is the behaviour you want to change?</label>
 				<input type="text" id="name" name="name" placeholder="e.g., Procrastination, Overeating, etc." required/>
 
@@ -49,6 +60,7 @@ templ BehavioursPage(behaviours []models.Behaviour, aims []models.Aim) {
 				</select>
 
 				<button type="submit">Add Behaviour</button>
+				<span id="spinner" class="htmx-indicator" style="display:none">Processing...</span>
 			</form>
 		</div>
 	}

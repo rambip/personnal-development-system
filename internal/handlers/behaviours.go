@@ -58,25 +58,58 @@ func CreateBehaviourHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("Successfully created behaviour with ID: %d", id)
-	http.Redirect(w, r, "/behaviours", http.StatusSeeOther)
+
+	// Check if this is an HTMX request
+	if r.Header.Get("HX-Request") == "true" {
+		// Return just the updated behaviours list for HTMX
+		behaviours, err := models.GetAllBehaviours()
+		if err != nil {
+			log.Printf("Error retrieving behaviours: %v", err)
+			http.Error(w, "Error retrieving behaviours", http.StatusInternalServerError)
+			return
+		}
+
+		component := templates.BehavioursList(behaviours)
+		if err := component.Render(r.Context(), w); err != nil {
+			log.Printf("Error rendering behaviours list: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
+	} else {
+		// Regular form submit - redirect to behaviours page
+		http.Redirect(w, r, "/behaviours", http.StatusSeeOther)
+	}
 }
 
 // DeleteBehaviourHandler handles deleting behaviours
 func DeleteBehaviourHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	// Support both POST and DELETE methods (HTMX uses DELETE)
+	if r.Method != http.MethodPost && r.Method != http.MethodDelete {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	// Parse form for POST requests
-	if err := r.ParseForm(); err != nil {
-		log.Printf("Error parsing form: %v", err)
-		http.Error(w, "Error parsing form", http.StatusBadRequest)
-		return
+	var behaviourIDStr string
+
+	// Parse the appropriate data based on the request method
+	if r.Method == http.MethodPost {
+		if err := r.ParseForm(); err != nil {
+			log.Printf("Error parsing form: %v", err)
+			http.Error(w, "Error parsing form", http.StatusBadRequest)
+			return
+		}
+		behaviourIDStr = r.PostForm.Get("behaviourID")
+		log.Printf("POST Delete - Form data: %+v", r.PostForm)
+	} else { // DELETE method
+		if err := r.ParseForm(); err != nil {
+			log.Printf("Error parsing form: %v", err)
+			http.Error(w, "Error parsing form", http.StatusBadRequest)
+			return
+		}
+		behaviourIDStr = r.Form.Get("behaviourID")
+		log.Printf("DELETE request - Form data: %+v", r.Form)
 	}
 
-	behaviourIDStr := r.PostForm.Get("behaviourID")
-	log.Printf("POST Delete - Form data: %+v, behaviourID: %s", r.PostForm, behaviourIDStr)
+	log.Printf("Deleting behaviour with ID: %s", behaviourIDStr)
 
 	// Parse the behaviour ID
 	behaviourID, err := strconv.ParseInt(behaviourIDStr, 10, 64)
@@ -101,7 +134,16 @@ func DeleteBehaviourHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("Successfully deleted behaviour with ID: %d", behaviourID)
-	http.Redirect(w, r, "/behaviours", http.StatusSeeOther)
+
+	// Handle HTMX request differently
+	if r.Header.Get("HX-Request") == "true" {
+		// For HTMX DELETE requests, we can just return an empty response with 200 status
+		// This will remove the row from the table due to hx-swap="outerHTML"
+		w.WriteHeader(http.StatusOK)
+	} else {
+		// Regular form submit - redirect to behaviours page
+		http.Redirect(w, r, "/behaviours", http.StatusSeeOther)
+	}
 }
 
 // handleGetBehaviours retrieves and displays all behaviours
