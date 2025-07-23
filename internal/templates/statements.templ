@@ -1,0 +1,50 @@
+package templates
+
+import (
+	"strconv"
+	"test-go-htmx/internal/models"
+	"time"
+)
+
+templ StatementsPage(statements []models.Statement) {
+	@Base("Statements | Journal App", time.Now().Year()) {
+		<div>
+			<h1>Statements</h1>
+			<table>
+				<tr>
+					<th>ID</th>
+					<th>Content</th>
+					<th>Priority</th>
+					<th>Actions</th>
+				</tr>
+				for _, statement := range statements {
+					<tr>
+						<td>{ strconv.FormatInt(statement.ID, 10) }</td>
+						<td>{ statement.Content }</td>
+						<td>{ strconv.Itoa(statement.Priority) }</td>
+						<td>
+							<form method="POST" action="/statements/delete">
+								<input type="hidden" name="statementID" value={ strconv.FormatInt(statement.ID, 10) }/>
+								<button type="submit">Delete</button>
+							</form>
+							<!-- Alternative link for delete -->
+							<a href={ "/statements/delete?statementID=" + strconv.FormatInt(statement.ID, 10) } onclick="if(!confirm('Are you sure?')) return false;">Delete (Link)</a>
+						</td>
+					</tr>
+				}
+			</table>
+		</div>
+		<div>
+			<h2>Add a New Statement</h2>
+			<form method="POST" action="/statements/create">
+				<label for="content">What is your statement?</label>
+				<input type="text" id="content" name="content" required/>
+
+				<label for="priority">Set a priority (0-10):</label>
+				<input type="number" id="priority" name="priority" min="0" max="10" value="0"/>
+
+				<button type="submit">Add Statement</button>
+			</form>
+		</div>
+	}
+}
