@@ -1,0 +1,131 @@
+package handlers
+
+import (
+	"log"
+	"net/http"
+	"strconv"
+	"test-go-htmx/internal/models"
+	"test-go-htmx/internal/templates"
+)
+
+// BehavioursHandler handles the Behaviours page
+func BehavioursHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("BehavioursHandler called with path: %s, method: %s", r.URL.Path, r.Method)
+
+	// Handle GET requests
+	if r.Method == http.MethodGet {
+		log.Printf("Handling GET request for Behaviours page")
+		handleGetBehaviours(w, r)
+	} else {
+		log.Printf("Method %s not allowed for Behaviours page", r.Method)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// CreateBehaviourHandler handles creating new behaviours
+func CreateBehaviourHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	err := r.ParseForm()
+	if err != nil {
+		log.Printf("Error parsing form: %v", err)
+		http.Error(w, "Error parsing form", http.StatusBadRequest)
+		return
+	}
+
+	name := r.PostForm.Get("name")
+	description := r.PostForm.Get("description")
+	conflictingAimIDStr := r.PostForm.Get("conflictingAimID")
+
+	conflictingAimID, err := strconv.ParseInt(conflictingAimIDStr, 10, 64)
+	if err != nil {
+		log.Printf("Invalid conflicting aim ID: %v", err)
+		http.Error(w, "Invalid conflicting aim ID", http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("Creating new behaviour - Name: %s, Description: %s, Conflicting Aim ID: %d",
+		name, description, conflictingAimID)
+
+	id, err := models.CreateBehaviour(name, description, conflictingAimID)
+	if err != nil {
+		log.Printf("Error creating behaviour: %v", err)
+		http.Error(w, "Error creating behaviour", http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("Successfully created behaviour with ID: %d", id)
+	http.Redirect(w, r, "/behaviours", http.StatusSeeOther)
+}
+
+// DeleteBehaviourHandler handles deleting behaviours
+func DeleteBehaviourHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Parse form for POST requests
+	if err := r.ParseForm(); err != nil {
+		log.Printf("Error parsing form: %v", err)
+		http.Error(w, "Error parsing form", http.StatusBadRequest)
+		return
+	}
+
+	behaviourIDStr := r.PostForm.Get("behaviourID")
+	log.Printf("POST Delete - Form data: %+v, behaviourID: %s", r.PostForm, behaviourIDStr)
+
+	// Parse the behaviour ID
+	behaviourID, err := strconv.ParseInt(behaviourIDStr, 10, 64)
+	if err != nil {
+		log.Printf("Invalid behaviour ID: %v", err)
+		http.Error(w, "Invalid behaviour ID", http.StatusBadRequest)
+		return
+	}
+
+	if behaviourID <= 0 {
+		log.Printf("Missing behaviour ID")
+		http.Error(w, "behaviourID is required", http.StatusBadRequest)
+		return
+	}
+
+	// Delete the behaviour
+	err = models.DeleteBehaviour(behaviourID)
+	if err != nil {
+		log.Printf("Error deleting behaviour: %v", err)
+		http.Error(w, "Error deleting behaviour", http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("Successfully deleted behaviour with ID: %d", behaviourID)
+	http.Redirect(w, r, "/behaviours", http.StatusSeeOther)
+}
+
+// handleGetBehaviours retrieves and displays all behaviours
+func handleGetBehaviours(w http.ResponseWriter, r *http.Request) {
+	behaviours, err := models.GetAllBehaviours()
+	if err != nil {
+		log.Printf("Error retrieving behaviours: %v", err)
+		http.Error(w, "Error retrieving behaviours", http.StatusInternalServerError)
+		return
+	}
+
+	aims, err := models.GetAllValues()
+	if err != nil {
+		log.Printf("Error retrieving aims: %v", err)
+		http.Error(w, "Error retrieving aims", http.StatusInternalServerError)
+		return
+	}
+
+	component := templates.BehavioursPage(behaviours, aims)
+	if err := component.Render(r.Context(), w); err != nil {
+		log.Printf("Error rendering Behaviours page: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("Successfully rendered Behaviours page with %d behaviours", len(behaviours))
+}

@@ -1,0 +1,55 @@
+package templates
+
+import (
+	"strconv"
+	"test-go-htmx/internal/models"
+	"time"
+)
+
+templ BehavioursPage(behaviours []models.Behaviour, aims []models.Aim) {
+	@Base("Behaviours | Journal App", time.Now().Year()) {
+		<div>
+			<h1>Behaviours in Conflict with Values</h1>
+			<table>
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Conflicts with Value</th>
+					<th>Actions</th>
+				</tr>
+				for _, behaviour := range behaviours {
+					<tr>
+						<td>{ behaviour.Name }</td>
+						<td>{ behaviour.Description }</td>
+						<td>{ behaviour.ConflictingAimName }</td>
+						<td>
+							<form method="POST" action="/behaviours/delete">
+								<input type="hidden" name="behaviourID" value={ strconv.FormatInt(behaviour.ID, 10) }/>
+								<button type="submit">Delete</button>
+							</form>
+						</td>
+					</tr>
+				}
+			</table>
+		</div>
+		<div>
+			<h2>Add a New Behaviour</h2>
+			<form method="POST" action="/behaviours/create">
+				<label for="name">What is the behaviour you want to change?</label>
+				<input type="text" id="name" name="name" placeholder="e.g., Procrastination, Overeating, etc." required/>
+
+				<label for="description">Describe this behaviour and its impact:</label>
+				<textarea id="description" name="description" placeholder="How does this behaviour manifest and what effect does it have on your life?" required></textarea>
+
+				<label for="conflictingAimID">Which value does this behaviour conflict with?</label>
+				<select id="conflictingAimID" name="conflictingAimID" required>
+					for _, aim := range aims {
+						<option value={ strconv.FormatInt(aim.ID, 10) }>{ aim.Name }</option>
+					}
+				</select>
+
+				<button type="submit">Add Behaviour</button>
+			</form>
+		</div>
+	}
+}
