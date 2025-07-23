@@ -3,15 +3,12 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
-	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
-// DB is the global database connection
 var DB *sql.DB
 
 // Initialize sets up the database connection and runs migrations
@@ -35,7 +32,7 @@ func Initialize(dbPath string) error {
 		return fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	log.Printf("Connected to database at %s", dbPath)
+	fmt.Printf("Connected to database at %s\n", dbPath)
 
 	// Run migrations
 	if err = runMigrations(); err != nil {
@@ -66,16 +63,13 @@ func runMigrations() error {
 	// Sort and execute migrations
 	migrations := make([]string, 0, len(entries))
 	for _, entry := range entries {
-		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".sql") {
+		if !entry.IsDir() && filepath.Ext(entry.Name()) == ".sql" {
 			migrations = append(migrations, filepath.Join(migrationsDir, entry.Name()))
 		}
 	}
 
-	// Sort migrations by filename
-	// (We're assuming migrations are named with a numeric prefix, e.g., 001_, 002_, etc.)
-
 	for _, migrationPath := range migrations {
-		log.Printf("Running migration: %s", migrationPath)
+		fmt.Printf("Running migration: %s\n", migrationPath)
 
 		// Read migration file
 		migrationSQL, err := os.ReadFile(migrationPath)
@@ -89,13 +83,8 @@ func runMigrations() error {
 			return fmt.Errorf("failed to execute migration %s: %w", migrationPath, err)
 		}
 
-		log.Printf("Successfully applied migration: %s", migrationPath)
+		fmt.Printf("Successfully applied migration: %s\n", migrationPath)
 	}
 
 	return nil
-}
-
-// GetDB returns the database connection
-func GetDB() *sql.DB {
-	return DB
 }

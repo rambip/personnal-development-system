@@ -10,7 +10,7 @@ import (
 	"test-go-htmx/internal/models"
 )
 
-func main() {
+func TestDBMain() {
 	// Set up database
 	dbDir := "data"
 	if err := os.MkdirAll(dbDir, 0755); err != nil {

@@ -19,7 +19,7 @@ type Journal struct {
 
 // GetAllJournals retrieves all journal entries from the database
 func GetAllJournals() ([]Journal, error) {
-	db := database.GetDB()
+	db := database.DB
 	rows, err := db.Query("SELECT id, title, content, journal_type, created_at, updated_at FROM journals ORDER BY created_at DESC")
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func GetAllJournals() ([]Journal, error) {
 
 // GetJournal retrieves a journal entry by ID
 func GetJournal(id int64) (Journal, error) {
-	db := database.GetDB()
+	db := database.DB
 	var j Journal
 	err := db.QueryRow("SELECT id, title, content, journal_type, created_at, updated_at FROM journals WHERE id = ?", id).
 		Scan(&j.ID, &j.Title, &j.Content, &j.JournalType, &j.CreatedAt, &j.UpdatedAt)
@@ -54,7 +54,7 @@ func GetJournal(id int64) (Journal, error) {
 
 // CreateJournal inserts a new journal entry into the database
 func CreateJournal(title string, content string, journalType string) (int64, error) {
-	db := database.GetDB()
+	db := database.DB
 	result, err := db.Exec(
 		"INSERT INTO journals (title, content, journal_type) VALUES (?, ?, ?)",
 		title, content, journalType,
@@ -67,7 +67,7 @@ func CreateJournal(title string, content string, journalType string) (int64, err
 
 // UpdateJournal updates an existing journal entry
 func UpdateJournal(id int64, title string, content string, journalType string) error {
-	db := database.GetDB()
+	db := database.DB
 	_, err := db.Exec(
 		"UPDATE journals SET title = ?, content = ?, journal_type = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
 		title, content, journalType, id,
@@ -77,7 +77,7 @@ func UpdateJournal(id int64, title string, content string, journalType string) e
 
 // GetJournalsByType retrieves all journal entries of a specific type
 func GetJournalsByType(journalType string) ([]Journal, error) {
-	db := database.GetDB()
+	db := database.DB
 	rows, err := db.Query("SELECT id, title, content, journal_type, created_at, updated_at FROM journals WHERE journal_type = ? ORDER BY created_at DESC", journalType)
 	if err != nil {
 		return nil, err
@@ -103,7 +103,7 @@ func GetJournalsByType(journalType string) ([]Journal, error) {
 
 // DeleteJournal deletes a journal entry by ID
 func DeleteJournal(id int64) error {
-	db := database.GetDB()
+	db := database.DB
 	_, err := db.Exec("DELETE FROM journals WHERE id = ?", id)
 	return err
 }

@@ -1,0 +1,41 @@
+package templates
+
+import (
+	"test-go-htmx/internal/viewmodels"
+	"time"
+)
+
+templ ValuesPage(values []viewmodels.Value) {
+	@Base("Values | Journal App", time.Now().Year()) {
+		<div>
+			<h1>Values</h1>
+			<table>
+				<tr>
+					<th>ID</th>
+					<th>Name</th>
+					<th>Description</th>
+				</tr>
+				for _, it := range values {
+					<tr>
+						<td>{ it.ID }</td>
+						<td>{ it.Name }</td>
+						<td>{ it.Description }</td>
+					</tr>
+				}
+			</table>
+			<form method="POST" action="/values">
+				<label for="name">Name</label>
+				<input type="text" id="name" name="name" required/>
+				<label for="description">Description</label>
+				<textarea id="description" name="description"></textarea>
+				<label for="parents">Parents</label>
+				<select id="parents" name="parents" multiple>
+					for _, it := range values {
+						<option value="{ it.ID }">{ it.Name }</option>
+					}
+				</select>
+				<button type="submit">Create Value</button>
+			</form>
+		</div>
+	}
+}

@@ -1,0 +1,27 @@
+package templates
+
+import "time"
+
+import "test-go-htmx/internal/viewmodels"
+
+templ ParentsPage(parents []viewmodels.Value) {
+	@Base("Parents | Journal App", time.Now().Year()) {
+		<div>
+			<h1>Parents</h1>
+			<table>
+				<tr>
+					<th>ID</th>
+					<th>Name</th>
+					<th>Description</th>
+				</tr>
+				for _, it := range parents {
+					<tr>
+						<td>{ it.ID }</td>
+						<td>{ it.Name }</td>
+						<td>{ it.Description }</td>
+					</tr>
+				}
+			</table>
+		</div>
+	}
+}

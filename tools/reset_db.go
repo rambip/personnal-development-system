@@ -10,7 +10,7 @@ import (
 	"test-go-htmx/internal/models"
 )
 
-func main() {
+func ResetDBMain() {
 	// Define the database directory and file
 	dbDir := "data"
 	dbPath := filepath.Join(dbDir, "app.db")
@@ -33,7 +33,7 @@ func main() {
 	if err := database.Initialize(dbPath); err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
-	defer database.Close()
+	defer database.DB.Close()
 
 	// Create sample journal entries
 	fmt.Println("Creating sample journal entries...")
