@@ -1,4 +1,4 @@
-# Journal App
+# A Personnal Development System
 
 <img width="937" height="871" alt="image" src="https://github.com/user-attachments/assets/a6fb70a6-6a69-447d-996c-75e492f8d4e6" />
 
@@ -8,12 +8,13 @@ A Go application for tracking journals, values, plans, statements, and behaviors
 This is meant to be an implementation of a [Personnal Development System](https://www.lesswrong.com/posts/mpbtk2xBjqjL7p5uQ/personal-development-system-winning-repeatedly-and-growing)
 
 ## Features
-- Journal entries with different types
-- Value tracking and hierarchies
-- Plan management with resources required
-- Statement tracking with priority levels
-- Behavior tracking with conflicting values
-- HTMX-powered inline editing without page refreshes
+- [x] Journal entries with different types
+- [x] Value tracking and hierarchies
+- [x] Plan management
+- [x] Statement (mantras) expression
+- [x] Behavior tracking
+- [ ] Moods
+- [ ] LLM conversation
 
 ## Project Structure
 ```

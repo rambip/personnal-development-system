@@ -54,7 +54,7 @@ templ BehavioursPage(behaviours []models.Behaviour, aims []models.Aim) {
 				<label for="description">Describe this behaviour and its impact:</label>
 				<textarea id="description" name="description" placeholder="How does this behaviour manifest and what effect does it have on your life?" required></textarea>
 				<label for="mark">Mark (a sign to help you track this behaviour):</label>
-				<input type="text" id="mark" name="mark" placeholder="e.g., 🔴, ⚠️, or any tracking symbol"/>
+				<input type="text" id="mark" name="mark" placeholder="e.g., a pinch"/>
 				<label for="conflictingAimID">Which value does this behaviour conflict with?</label>
 				<select id="conflictingAimID" name="conflictingAimID" required>
 					for _, aim := range aims {
