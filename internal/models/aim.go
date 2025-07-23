@@ -6,8 +6,8 @@ import (
 	"test-go-htmx/internal/database"
 )
 
-// Value represents a value in the system
-type Value struct {
+// Aim represents a value in the system
+type Aim struct {
 	ID          int64
 	Name        string
 	Description string
@@ -16,11 +16,11 @@ type Value struct {
 }
 
 // GetChildren retrieves all child values for a given value ID.
-func GetChildren(valueID int64) ([]Value, error) {
+func GetChildren(valueID int64) ([]Aim, error) {
 	db := database.DB
 	rows, err := db.Query(
 		`SELECT v.id, v.name, v.description
-		 FROM values v
+		 FROM aims v
 		 JOIN value_parents vp ON v.id = vp.value_id
 		 WHERE vp.parent_value_id = ?`,
 		valueID,
@@ -30,9 +30,9 @@ func GetChildren(valueID int64) ([]Value, error) {
 	}
 	defer rows.Close()
 
-	var children []Value
+	var children []Aim
 	for rows.Next() {
-		var v Value
+		var v Aim
 		var description sql.NullString
 		if err := rows.Scan(&v.ID, &v.Name, &description); err != nil {
 			return nil, err
@@ -48,12 +48,12 @@ func GetChildren(valueID int64) ([]Value, error) {
 	return children, nil
 }
 
-// GetParents retrieves all parent values for a given value ID.
-func GetParents(valueID int64) ([]Value, error) {
+// GetParents retrieves all parent values for a given Aim ID.
+func GetParents(valueID int64) ([]Aim, error) {
 	db := database.DB
 	rows, err := db.Query(
 		`SELECT v.id, v.name, v.description
-		 FROM values v
+		 FROM aims v
 		 JOIN value_parents vp ON v.id = vp.parent_value_id
 		 WHERE vp.value_id = ?`,
 		valueID,
@@ -63,9 +63,9 @@ func GetParents(valueID int64) ([]Value, error) {
 	}
 	defer rows.Close()
 
-	var parents []Value
+	var parents []Aim
 	for rows.Next() {
-		var v Value
+		var v Aim
 		var description sql.NullString
 		if err := rows.Scan(&v.ID, &v.Name, &description); err != nil {
 			return nil, err
@@ -81,18 +81,18 @@ func GetParents(valueID int64) ([]Value, error) {
 	return parents, nil
 }
 
-// GetAllValues retrieves all values from the database.
-func GetAllValues() ([]Value, error) {
+// GetAllValues retrieves all Aim from the database.
+func GetAllValues() ([]Aim, error) {
 	db := database.DB
-	rows, err := db.Query("SELECT id, name, description FROM `values`")
+	rows, err := db.Query("SELECT id, name, description FROM aims")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var values []Value
+	var values []Aim
 	for rows.Next() {
-		var v Value
+		var v Aim
 		var description sql.NullString
 		if err := rows.Scan(&v.ID, &v.Name, &description); err != nil {
 			return nil, err
@@ -112,7 +112,7 @@ func GetAllValues() ([]Value, error) {
 func CreateValue(name string, description string, parentIDs []string) (int64, error) {
 	db := database.DB
 	result, err := db.Exec(
-		"INSERT INTO `values` (name, description) VALUES (?, ?)",
+		"INSERT INTO aims (name, description) VALUES (?, ?)",
 		name, description,
 	)
 	if err != nil {
@@ -148,7 +148,7 @@ func DeleteValue(valueID int64) error {
 	}
 
 	// Delete the value itself
-	result, err := db.Exec("DELETE FROM `values` WHERE id = ?", valueID)
+	result, err := db.Exec("DELETE FROM aims WHERE id = ?", valueID)
 	if err != nil {
 		return fmt.Errorf("failed to delete value: %w", err)
 	}

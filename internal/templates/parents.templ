@@ -4,7 +4,7 @@ import "time"
 
 import "test-go-htmx/internal/models"
 
-templ ParentsPage(parents []models.Value) {
+templ ParentsPage(parents []models.Aim) {
 	@Base("Parents | Journal App", time.Now().Year()) {
 		<div>
 			<h1>Parents</h1>

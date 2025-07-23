@@ -4,8 +4,8 @@
 
 You must follow these rules:
 - Each time you make a big change to the go code, try to recompile it
-- in the schema, create tables only if they don't exist.
 - NEVER RUN THE APP YOURSELF
+- when you create a new page, add it to the navbar and to the home page
 
 ## Build/Test Commands
 - **Build**: `templ generate && go build ./...` (builds all packages)
@@ -32,6 +32,20 @@ You must follow these rules:
 - **HTTP handlers**: Check request methods explicitly, use proper HTTP status codes
 - **Templates**: Use templ for type-safe HTML templates, convert models to viewmodels
 - **Comments**: Document exported functions and types, explain complex logic
+
+## Database creation
+
+Create database if they don't alraedy exist:
+```sql
+CREATE TABLE IF NOT EXISTS plans (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT,
+    resources_required TEXT,
+    value_id INTEGER NOT NULL,
+    FOREIGN KEY (value_id) REFERENCES aims (id)
+);
+```
 
 ## Template syntax
 

@@ -31,6 +31,7 @@ func main() {
 	// Define the routes
 	http.HandleFunc("/", handlers.HomeHandler)
 	http.HandleFunc("/journals", handlers.JournalsHandler)
+	http.HandleFunc("/plans", handlers.PlansHandler)
 	http.HandleFunc("/values", handlers.ValuesHandler)
 	http.HandleFunc("/values/delete", handlers.DeleteValueHandler)
 	http.HandleFunc("/values/children", handlers.ValuesHandler)

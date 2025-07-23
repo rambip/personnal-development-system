@@ -1,0 +1,55 @@
+package templates
+
+import (
+	"strconv"
+	"test-go-htmx/internal/models"
+	"time"
+)
+
+templ PlansPage(plans []models.Plan, values []models.Aim) {
+	@Base("Plans | Journal App", time.Now().Year()) {
+		<div>
+			<h1>Plans</h1>
+			<table>
+				<tr>
+					<th>ID</th>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Resources Required</th>
+					<th>Associated Value</th>
+				</tr>
+				for _, plan := range plans {
+					<tr>
+						<td>{ strconv.FormatInt(plan.ID, 10) }</td>
+						<td>{ plan.Name }</td>
+						<td>{ plan.Description }</td>
+						<td>{ plan.ResourcesRequired }</td>
+						<td>{ strconv.FormatInt(plan.ValueID, 10) }</td>
+					</tr>
+				}
+			</table>
+		</div>
+		<div>
+			<h2>Create a New Plan</h2>
+			<form method="POST" action="/plans/create">
+				<label for="name">What is the name of your plan?</label>
+				<input type="text" id="name" name="name" required/>
+
+				<label for="description">Describe your plan in detail.</label>
+				<textarea id="description" name="description" required></textarea>
+
+				<label for="resources">What resources are needed to execute this plan?</label>
+				<input type="text" id="resources" name="resources" required/>
+
+				<label for="valueID">Select an associated value:</label>
+				<select id="valueID" name="valueID" required>
+					for _, value := range values {
+						<option value={ strconv.FormatInt(value.ID, 10) }>{ value.Name }</option>
+					}
+				</select>
+
+				<button type="submit">Create Plan</button>
+			</form>
+		</div>
+	}
+}
