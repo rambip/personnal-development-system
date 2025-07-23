@@ -1,10 +1,11 @@
 package templates
 
-import "test-go-htmx/internal/viewmodels"
+import (
+	"test-go-htmx/internal/models"
+	"time"
+)
 
-import "time"
-
-templ ChildrenPage(children []viewmodels.Value) {
+templ ChildrenPage(children []models.Value) {
 	@Base("Children | Journal App", time.Now().Year()) {
 		<div>
 			<h1>Children</h1>

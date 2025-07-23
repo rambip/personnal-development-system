@@ -8,34 +8,9 @@ import (
 
 	"test-go-htmx/internal/models"
 	"test-go-htmx/internal/templates"
-	"test-go-htmx/internal/viewmodels"
 )
 
-// convertModelToTemplateJournal converts a models.Journal to viewmodels.JournalEntry
-func convertModelToTemplateJournal(journal models.Journal) viewmodels.JournalEntry {
-	content := ""
-	if journal.Content.Valid {
-		content = journal.Content.String
-	}
-
-	return viewmodels.JournalEntry{
-		ID:          journal.ID,
-		Title:       journal.Title,
-		Content:     content,
-		JournalType: journal.JournalType,
-		CreatedAt:   journal.CreatedAt,
-		UpdatedAt:   journal.UpdatedAt,
-	}
-}
-
-// convertModelsToTemplateJournals converts a slice of models.Journal to viewmodels.JournalEntry
-func convertModelsToTemplateJournals(journals []models.Journal) []viewmodels.JournalEntry {
-	result := make([]viewmodels.JournalEntry, len(journals))
-	for i, journal := range journals {
-		result[i] = convertModelToTemplateJournal(journal)
-	}
-	return result
-}
+// These conversion functions are no longer needed with the simplified model approach
 
 // HomeHandler handles the home page
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
@@ -101,13 +76,10 @@ func handleGetJournals(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Retrieved %d journals", len(journals))
 
-	// Convert models to template types
-	templateJournals := convertModelsToTemplateJournals(journals)
-
 	// If it's an HTMX request, just return the journal list partial
 	if r.Header.Get("HX-Request") == "true" {
 		log.Printf("HTMX request detected, rendering partial template")
-		component := templates.JournalList(templateJournals)
+		component := templates.JournalList(journals)
 		if err := component.Render(r.Context(), w); err != nil {
 			log.Printf("Error rendering partial template: %v", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -119,7 +91,7 @@ func handleGetJournals(w http.ResponseWriter, r *http.Request) {
 
 	// Otherwise, return the full page
 	log.Printf("Rendering full journals page")
-	component := templates.Journals(templateJournals)
+	component := templates.Journals(journals)
 	if err := component.Render(r.Context(), w); err != nil {
 		log.Printf("Error rendering journals template: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -174,8 +146,7 @@ func handleCreateJournal(w http.ResponseWriter, r *http.Request) {
 	// Return just the single journal entry if it's an HTMX request
 	if r.Header.Get("HX-Request") == "true" {
 		log.Printf("Responding to HTMX create request with partial template")
-		templateJournal := convertModelToTemplateJournal(journal)
-		component := templates.JournalEntry(templateJournal)
+		component := templates.JournalEntry(journal)
 		if err := component.Render(r.Context(), w); err != nil {
 			log.Printf("Error rendering partial template after create: %v", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -187,6 +158,46 @@ func handleCreateJournal(w http.ResponseWriter, r *http.Request) {
 
 	// Redirect to journals page if it's not an HTMX request
 	log.Printf("Redirecting to journals page after create")
+	http.Redirect(w, r, "/journals", http.StatusSeeOther)
+}
+
+// HandleDeleteJournal handles POST requests to delete a journal entry
+func HandleDeleteJournal(w http.ResponseWriter, r *http.Request) {
+	log.Printf("handleDeleteJournal called")
+	err := r.ParseForm()
+	if err != nil {
+		log.Printf("Error parsing form: %v", err)
+		http.Error(w, "Error parsing form", http.StatusBadRequest)
+		return
+	}
+
+	// Extract journal ID from form
+	idStr := r.PostForm.Get("journalID")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		log.Printf("Invalid journal ID: %s - %v", idStr, err)
+		http.Error(w, "Invalid journal ID", http.StatusBadRequest)
+		return
+	}
+
+	// Delete the journal entry
+	err = models.DeleteJournal(id)
+	if err != nil {
+		log.Printf("Error deleting journal: %v", err)
+		http.Error(w, "Error deleting journal", http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("Successfully deleted journal with ID: %d", id)
+
+	// Respond to HTMX request
+	if r.Header.Get("HX-Request") == "true" {
+		log.Printf("Responding to HTMX delete request")
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	// Redirect to journals page if not HTMX
 	http.Redirect(w, r, "/journals", http.StatusSeeOther)
 }
 

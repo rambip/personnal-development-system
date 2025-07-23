@@ -1,11 +1,12 @@
 package templates
 
 import (
-	"test-go-htmx/internal/viewmodels"
+	"strconv"
+	"test-go-htmx/internal/models"
 	"time"
 )
 
-templ ValuesPage(values []viewmodels.Value) {
+templ ValuesPage(values []models.Value) {
 	@Base("Values | Journal App", time.Now().Year()) {
 		<div>
 			<h1>Values</h1>
@@ -17,9 +18,15 @@ templ ValuesPage(values []viewmodels.Value) {
 				</tr>
 				for _, it := range values {
 					<tr>
-						<td>{ it.ID }</td>
+						<td>{ strconv.FormatInt(it.ID, 10) }</td>
 						<td>{ it.Name }</td>
 						<td>{ it.Description }</td>
+						<td>
+							<form method="POST" action="/values/delete">
+								<input type="hidden" name="valueID" value={ strconv.FormatInt(it.ID, 10) }/>
+								<button type="submit">Delete</button>
+							</form>
+						</td>
 					</tr>
 				}
 			</table>
@@ -31,7 +38,7 @@ templ ValuesPage(values []viewmodels.Value) {
 				<label for="parents">Parents</label>
 				<select id="parents" name="parents" multiple>
 					for _, it := range values {
-						<option value="{ it.ID }">{ it.Name }</option>
+						<option value={ strconv.FormatInt(it.ID, 10) }>{ it.Name }</option>
 					}
 				</select>
 				<button type="submit">Create Value</button>

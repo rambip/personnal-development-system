@@ -1,27 +1,30 @@
 package templates
 
-import "test-go-htmx/internal/viewmodels"
+import (
+	"strconv"
+	"test-go-htmx/internal/models"
+)
 
 // JournalEntry renders a single journal entry
-templ JournalEntry(entry viewmodels.JournalEntry) {
+templ JournalEntry(entry models.Journal) {
 	<div class={ "journal-entry", entry.JournalType }>
 		<h3>{ entry.Title }</h3>
 		<div class="meta">
 			<span>Type: { entry.JournalType }</span> |
-			<span>Created: { viewmodels.FormatTime(entry.CreatedAt) }</span>
+			<span>Created: { entry.CreatedAt.Format("Jan 02, 2006 at 15:04") }</span>
 		</div>
 		<div class="content">
-			if entry.Content != "" {
-				{ entry.Content }
-			} else {
-				<em>No content</em>
-			}
+			<form method="POST" action="/journals/delete">
+				<input type="hidden" name="journalID" value={ strconv.FormatInt(entry.ID, 10) }/>
+				<button type="submit" class="delete-button">Delete</button>
+			</form>
+			{ entry.Content }
 		</div>
 	</div>
 }
 
 // JournalList renders a list of journal entries
-templ JournalList(journals []viewmodels.JournalEntry) {
+templ JournalList(journals []models.Journal) {
 	if len(journals) > 0 {
 		for _, journal := range journals {
 			@JournalEntry(journal)

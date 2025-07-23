@@ -1,11 +1,11 @@
 package templates
 
 import (
-	"test-go-htmx/internal/viewmodels"
+	"test-go-htmx/internal/models"
 	"time"
 )
 
-templ Journals(journals []viewmodels.JournalEntry) {
+templ Journals(journals []models.Journal) {
 	@Base("Journals | Journal App", time.Now().Year()) {
 		<div>
 			<h1>My Journals</h1>

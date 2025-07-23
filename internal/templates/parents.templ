@@ -2,9 +2,9 @@ package templates
 
 import "time"
 
-import "test-go-htmx/internal/viewmodels"
+import "test-go-htmx/internal/models"
 
-templ ParentsPage(parents []viewmodels.Value) {
+templ ParentsPage(parents []models.Value) {
 	@Base("Parents | Journal App", time.Now().Year()) {
 		<div>
 			<h1>Parents</h1>

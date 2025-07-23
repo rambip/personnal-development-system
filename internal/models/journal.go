@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	"test-go-htmx/internal/database"
@@ -11,7 +12,7 @@ import (
 type Journal struct {
 	ID          int64
 	Title       string
-	Content     sql.NullString
+	Content     string
 	JournalType string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
@@ -29,10 +30,12 @@ func GetAllJournals() ([]Journal, error) {
 	var journals []Journal
 	for rows.Next() {
 		var j Journal
-		err := rows.Scan(&j.ID, &j.Title, &j.Content, &j.JournalType, &j.CreatedAt, &j.UpdatedAt)
+		var content sql.NullString
+		err := rows.Scan(&j.ID, &j.Title, &content, &j.JournalType, &j.CreatedAt, &j.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
+		j.Content = content.String
 		journals = append(journals, j)
 	}
 
@@ -47,8 +50,12 @@ func GetAllJournals() ([]Journal, error) {
 func GetJournal(id int64) (Journal, error) {
 	db := database.DB
 	var j Journal
+	var content sql.NullString
 	err := db.QueryRow("SELECT id, title, content, journal_type, created_at, updated_at FROM journals WHERE id = ?", id).
-		Scan(&j.ID, &j.Title, &j.Content, &j.JournalType, &j.CreatedAt, &j.UpdatedAt)
+		Scan(&j.ID, &j.Title, &content, &j.JournalType, &j.CreatedAt, &j.UpdatedAt)
+	if err == nil {
+		j.Content = content.String
+	}
 	return j, err
 }
 
@@ -87,10 +94,12 @@ func GetJournalsByType(journalType string) ([]Journal, error) {
 	var journals []Journal
 	for rows.Next() {
 		var j Journal
-		err := rows.Scan(&j.ID, &j.Title, &j.Content, &j.JournalType, &j.CreatedAt, &j.UpdatedAt)
+		var content sql.NullString
+		err := rows.Scan(&j.ID, &j.Title, &content, &j.JournalType, &j.CreatedAt, &j.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
+		j.Content = content.String
 		journals = append(journals, j)
 	}
 
@@ -104,6 +113,20 @@ func GetJournalsByType(journalType string) ([]Journal, error) {
 // DeleteJournal deletes a journal entry by ID
 func DeleteJournal(id int64) error {
 	db := database.DB
-	_, err := db.Exec("DELETE FROM journals WHERE id = ?", id)
-	return err
+	query := "DELETE FROM journals WHERE id = ?"
+	result, err := db.Exec(query, id)
+	if err != nil {
+		return fmt.Errorf("failed to delete journal entry: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to retrieve rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no journal entry found with ID %d", id)
+	}
+
+	return nil
 }

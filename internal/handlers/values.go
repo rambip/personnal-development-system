@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"test-go-htmx/internal/models"
 	"test-go-htmx/internal/templates"
-	"test-go-htmx/internal/viewmodels"
 )
 
 // ValuesHandler handles the Values page.
@@ -31,8 +30,7 @@ func handleGetChildren(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	viewChildren := viewmodels.ConvertModelsToViewValues(children)
-	component := templates.ChildrenPage(viewChildren)
+	component := templates.ChildrenPage(children)
 	if err := component.Render(r.Context(), w); err != nil {
 		log.Printf("Error rendering Children page: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -62,8 +60,7 @@ func handleGetParents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	viewParents := viewmodels.ConvertModelsToViewValues(parents)
-	component := templates.ParentsPage(viewParents)
+	component := templates.ParentsPage(parents)
 	if err := component.Render(r.Context(), w); err != nil {
 		log.Printf("Error rendering Parents page: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -102,8 +99,7 @@ func handleGetValues(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	viewValues := viewmodels.ConvertModelsToViewValues(values)
-	component := templates.ValuesPage(viewValues)
+	component := templates.ValuesPage(values)
 	if err := component.Render(r.Context(), w); err != nil {
 		log.Printf("Error rendering Values page: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -148,6 +144,42 @@ func handleCreateValue(w http.ResponseWriter, r *http.Request) {
 // handleDeleteValue deletes a value by ID.
 func handleDeleteValue(w http.ResponseWriter, r *http.Request) {
 	valueIDStr := r.URL.Query().Get("valueID")
+	valueID, err := strconv.ParseInt(valueIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, "Invalid valueID", http.StatusBadRequest)
+		return
+	}
+	if valueID <= 0 {
+		http.Error(w, "valueID is required", http.StatusBadRequest)
+		return
+	}
+
+	err = models.DeleteValue(valueID)
+	if err != nil {
+		log.Printf("Error deleting value: %v", err)
+		http.Error(w, "Error deleting value", http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("Successfully deleted value with ID: %d", valueID)
+	http.Redirect(w, r, "/values", http.StatusSeeOther)
+}
+
+// DeleteValueHandler handles POST requests to delete a value
+func DeleteValueHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	err := r.ParseForm()
+	if err != nil {
+		log.Printf("Error parsing form: %v", err)
+		http.Error(w, "Error parsing form", http.StatusBadRequest)
+		return
+	}
+
+	valueIDStr := r.PostForm.Get("valueID")
 	valueID, err := strconv.ParseInt(valueIDStr, 10, 64)
 	if err != nil {
 		http.Error(w, "Invalid valueID", http.StatusBadRequest)

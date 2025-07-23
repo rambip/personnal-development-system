@@ -2,14 +2,16 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"test-go-htmx/internal/database"
 )
 
-// Ensure Value type is defined
+// Value represents a value in the system
 type Value struct {
 	ID          int64
 	Name        string
-	Description sql.NullString
+	Description string
+	ParentNames string
 	ParentIDs   []int64
 }
 
@@ -35,7 +37,7 @@ func GetChildren(valueID int64) ([]Value, error) {
 		if err := rows.Scan(&v.ID, &v.Name, &description); err != nil {
 			return nil, err
 		}
-		v.Description = description
+		v.Description = description.String
 		children = append(children, v)
 	}
 
@@ -68,7 +70,7 @@ func GetParents(valueID int64) ([]Value, error) {
 		if err := rows.Scan(&v.ID, &v.Name, &description); err != nil {
 			return nil, err
 		}
-		v.Description = description
+		v.Description = description.String
 		parents = append(parents, v)
 	}
 
@@ -95,7 +97,7 @@ func GetAllValues() ([]Value, error) {
 		if err := rows.Scan(&v.ID, &v.Name, &description); err != nil {
 			return nil, err
 		}
-		v.Description = description
+		v.Description = description.String
 		values = append(values, v)
 	}
 
@@ -142,10 +144,23 @@ func DeleteValue(valueID int64) error {
 	// Delete relationships first
 	_, err := db.Exec("DELETE FROM value_parents WHERE value_id = ? OR parent_value_id = ?", valueID, valueID)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to delete value relationships: %w", err)
 	}
 
 	// Delete the value itself
-	_, err = db.Exec("DELETE FROM `values` WHERE id = ?", valueID)
-	return err
+	result, err := db.Exec("DELETE FROM `values` WHERE id = ?", valueID)
+	if err != nil {
+		return fmt.Errorf("failed to delete value: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to retrieve rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no value found with ID %d", valueID)
+	}
+
+	return nil
 }

@@ -32,9 +32,11 @@ func main() {
 	http.HandleFunc("/", handlers.HomeHandler)
 	http.HandleFunc("/journals", handlers.JournalsHandler)
 	http.HandleFunc("/values", handlers.ValuesHandler)
+	http.HandleFunc("/values/delete", handlers.DeleteValueHandler)
 	http.HandleFunc("/values/children", handlers.ValuesHandler)
 	http.HandleFunc("/values/parents", handlers.ValuesHandler)
 	http.HandleFunc("/journals/type/", handlers.JournalsHandler)
+	http.HandleFunc("/journals/delete", handlers.HandleDeleteJournal)
 	http.HandleFunc("/journals/", handlers.JournalDetailHandler)
 
 	// Start the server

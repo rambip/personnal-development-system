@@ -47,12 +47,8 @@ func TestDBMain() {
 	// Display all journal entries
 	fmt.Printf("Found %d journal entries:\n", len(journals))
 	for _, journal := range journals {
-		content := ""
-		if journal.Content.Valid {
-			content = journal.Content.String
-		}
 		fmt.Printf("ID: %d\nTitle: %s\nContent: %s\nType: %s\nCreated: %v\nUpdated: %v\n\n",
-			journal.ID, journal.Title, content, journal.JournalType, journal.CreatedAt, journal.UpdatedAt)
+			journal.ID, journal.Title, journal.Content, journal.JournalType, journal.CreatedAt, journal.UpdatedAt)
 	}
 
 	// Update a journal entry
@@ -69,12 +65,8 @@ func TestDBMain() {
 		log.Fatalf("Failed to retrieve journal entry: %v", err)
 	}
 
-	content := ""
-	if journal.Content.Valid {
-		content = journal.Content.String
-	}
 	fmt.Printf("Updated Entry:\nID: %d\nTitle: %s\nContent: %s\nType: %s\nCreated: %v\nUpdated: %v\n",
-		journal.ID, journal.Title, content, journal.JournalType, journal.CreatedAt, journal.UpdatedAt)
+		journal.ID, journal.Title, journal.Content, journal.JournalType, journal.CreatedAt, journal.UpdatedAt)
 
 	fmt.Println("\nDatabase test completed successfully!")
 }
