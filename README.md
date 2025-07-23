@@ -1,5 +1,8 @@
 # Journal App
 
+<img width="937" height="871" alt="image" src="https://github.com/user-attachments/assets/a6fb70a6-6a69-447d-996c-75e492f8d4e6" />
+
+
 A Go application for tracking journals, values, plans, statements, and behaviors with HTMX-powered UI.
 
 This is meant to be an implementation of a [Personnal Development System](https://www.lesswrong.com/posts/mpbtk2xBjqjL7p5uQ/personal-development-system-winning-repeatedly-and-growing)
