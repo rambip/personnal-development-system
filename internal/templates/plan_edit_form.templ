@@ -1,0 +1,47 @@
+package templates
+
+import (
+	"strconv"
+	"test-go-htmx/internal/models"
+)
+
+templ EditPlanForm(plan models.Plan, values []models.Aim) {
+	<tr id={ "plan-row-" + strconv.FormatInt(plan.ID, 10) }>
+		<td>{ strconv.FormatInt(plan.ID, 10) }</td>
+		<td>
+			<input type="text" name="name" value={ plan.Name } required/>
+		</td>
+		<td>
+			<textarea name="description" required>{ plan.Description }</textarea>
+		</td>
+		<td>
+			<input type="text" name="resources_required" value={ plan.ResourcesRequired } required/>
+		</td>
+		<td>
+			<select name="value_id" required>
+				for _, value := range values {
+					if value.ID == plan.ValueID {
+						<option value={ strconv.FormatInt(value.ID, 10) } selected>{ value.Name }</option>
+					} else {
+						<option value={ strconv.FormatInt(value.ID, 10) }>{ value.Name }</option>
+					}
+				}
+			</select>
+		</td>
+		<td>
+			<button 
+				hx-put={ "/plans/update/" + strconv.FormatInt(plan.ID, 10) }
+				hx-include="closest tr"
+				hx-target={ "#plan-row-" + strconv.FormatInt(plan.ID, 10) }
+				hx-swap="outerHTML">
+				Save
+			</button>
+			<button 
+				hx-get={ "/plans/cancel-edit/" + strconv.FormatInt(plan.ID, 10) }
+				hx-target={ "#plan-row-" + strconv.FormatInt(plan.ID, 10) }
+				hx-swap="outerHTML">
+				Cancel
+			</button>
+		</td>
+	</tr>
+}

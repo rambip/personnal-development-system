@@ -34,6 +34,13 @@ templ PlansPage(plans []models.Plan, values []models.Aim) {
 			<form method="POST" action="/plans/create">
 				<label for="name">What is the name of your plan?</label>
 				<input type="text" id="name" name="name" required/>
+				
+				<label for="valueID">Why is this plan important ?</label>
+				<select id="valueID" name="valueID" required>
+					for _, value := range values {
+						<option value={ strconv.FormatInt(value.ID, 10) }>{ value.Name }</option>
+					}
+				</select>
 
 				<label for="description">Describe your plan in detail.</label>
 				<textarea id="description" name="description" required></textarea>
@@ -41,12 +48,6 @@ templ PlansPage(plans []models.Plan, values []models.Aim) {
 				<label for="resources">What resources are needed to execute this plan?</label>
 				<input type="text" id="resources" name="resources" required/>
 
-				<label for="valueID">Select an associated value:</label>
-				<select id="valueID" name="valueID" required>
-					for _, value := range values {
-						<option value={ strconv.FormatInt(value.ID, 10) }>{ value.Name }</option>
-					}
-				</select>
 
 				<button type="submit">Create Plan</button>
 			</form>

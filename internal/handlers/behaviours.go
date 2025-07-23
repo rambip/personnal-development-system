@@ -38,6 +38,7 @@ func CreateBehaviourHandler(w http.ResponseWriter, r *http.Request) {
 
 	name := r.PostForm.Get("name")
 	description := r.PostForm.Get("description")
+	mark := r.PostForm.Get("mark")
 	conflictingAimIDStr := r.PostForm.Get("conflictingAimID")
 
 	conflictingAimID, err := strconv.ParseInt(conflictingAimIDStr, 10, 64)
@@ -47,10 +48,10 @@ func CreateBehaviourHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("Creating new behaviour - Name: %s, Description: %s, Conflicting Aim ID: %d",
-		name, description, conflictingAimID)
+	log.Printf("Creating new behaviour - Name: %s, Description: %s, Mark: %s, Conflicting Aim ID: %d",
+		name, description, mark, conflictingAimID)
 
-	id, err := models.CreateBehaviour(name, description, conflictingAimID)
+	id, err := models.CreateBehaviour(name, description, mark, conflictingAimID)
 	if err != nil {
 		log.Printf("Error creating behaviour: %v", err)
 		http.Error(w, "Error creating behaviour", http.StatusInternalServerError)

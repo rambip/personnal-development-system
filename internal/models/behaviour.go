@@ -9,14 +9,15 @@ type Behaviour struct {
 	ID                 int64
 	Name               string
 	Description        string
+	Mark               string
 	ConflictingAimID   int64
 	ConflictingAimName string // For display purposes
 }
 
 // CreateBehaviour inserts a new behaviour into the database
-func CreateBehaviour(name, description string, conflictingAimID int64) (int64, error) {
-	query := "INSERT INTO behaviours (name, description, conflicting_aim_id) VALUES (?, ?, ?)"
-	result, err := database.DB.Exec(query, name, description, conflictingAimID)
+func CreateBehaviour(name, description, mark string, conflictingAimID int64) (int64, error) {
+	query := "INSERT INTO behaviours (name, description, mark, conflicting_aim_id) VALUES (?, ?, ?, ?)"
+	result, err := database.DB.Exec(query, name, description, mark, conflictingAimID)
 	if err != nil {
 		return 0, err
 	}
@@ -26,7 +27,7 @@ func CreateBehaviour(name, description string, conflictingAimID int64) (int64, e
 // GetAllBehaviours retrieves all behaviours with their conflicting aim names
 func GetAllBehaviours() ([]Behaviour, error) {
 	query := `
-		SELECT b.id, b.name, b.description, b.conflicting_aim_id, a.name 
+		SELECT b.id, b.name, b.description, b.mark, b.conflicting_aim_id, a.name 
 		FROM behaviours b
 		LEFT JOIN aims a ON b.conflicting_aim_id = a.id
 	`
@@ -43,6 +44,7 @@ func GetAllBehaviours() ([]Behaviour, error) {
 			&behaviour.ID,
 			&behaviour.Name,
 			&behaviour.Description,
+			&behaviour.Mark,
 			&behaviour.ConflictingAimID,
 			&behaviour.ConflictingAimName,
 		); err != nil {

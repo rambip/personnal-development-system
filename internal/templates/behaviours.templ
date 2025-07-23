@@ -15,6 +15,7 @@ templ BehavioursPage(behaviours []models.Behaviour, aims []models.Aim) {
 					<tr>
 						<th>Name</th>
 						<th>Description</th>
+						<th>Mark</th>
 						<th>Conflicts with Value</th>
 						<th>Actions</th>
 					</tr>
@@ -22,6 +23,7 @@ templ BehavioursPage(behaviours []models.Behaviour, aims []models.Aim) {
 						<tr>
 							<td>{ behaviour.Name }</td>
 							<td>{ behaviour.Description }</td>
+							<td>{ behaviour.Mark }</td>
 							<td>{ behaviour.ConflictingAimName }</td>
 							<td>
 								<button 
@@ -51,6 +53,9 @@ templ BehavioursPage(behaviours []models.Behaviour, aims []models.Aim) {
 
 				<label for="description">Describe this behaviour and its impact:</label>
 				<textarea id="description" name="description" placeholder="How does this behaviour manifest and what effect does it have on your life?" required></textarea>
+				
+				<label for="mark">Mark (a sign to help you track this behaviour):</label>
+				<input type="text" id="mark" name="mark" placeholder="e.g., 🔴, ⚠️, or any tracking symbol"/>
 
 				<label for="conflictingAimID">Which value does this behaviour conflict with?</label>
 				<select id="conflictingAimID" name="conflictingAimID" required>

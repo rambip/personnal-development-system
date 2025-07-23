@@ -11,6 +11,7 @@ templ BehavioursList(behaviours []models.Behaviour) {
 			<tr>
 				<th>Name</th>
 				<th>Description</th>
+				<th>Mark</th>
 				<th>Conflicts with Value</th>
 				<th>Actions</th>
 			</tr>
@@ -18,6 +19,7 @@ templ BehavioursList(behaviours []models.Behaviour) {
 				<tr>
 					<td>{ behaviour.Name }</td>
 					<td>{ behaviour.Description }</td>
+					<td>{ behaviour.Mark }</td>
 					<td>{ behaviour.ConflictingAimName }</td>
 					<td>
 						<button 
